@@ -1,0 +1,15 @@
+# depslib dependency file v1.0
+1554509470 source:c:\users\natha\onedrive\Área de trabalho\projeto x\main.c
+	<stdio.h>
+	<stdlib.h>
+
+1555439557 source:c:\users\natha\onedrive\Área de trabalho\c projets\projeto x\main.c
+	<stdio.h>
+	<stdlib.h>
+
+1557543104 source:c:\users\natha\onedrive\Área de trabalho\pastas\c projets\projeto x\main.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<locale.h>
+
