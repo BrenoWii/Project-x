@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <locale.h>
 
-int selecionaVotoOpcao(A,B,C,entrevistado, param){
+int selecionaVotoOpcao(A,B,C,entrevistado,param){
     int op = 0;
     system("cls");
     printf("1-%s;\n",A);
@@ -13,10 +13,8 @@ int selecionaVotoOpcao(A,B,C,entrevistado, param){
     printf("5-%s e %s;\n",A,C);
     printf("6-%s e %s;\n",B,C);
     printf("7-%s e %s e %s ;\n",A,B,C);
-    if(param){
-        printf("Em qual conjunto deseja aplica a operacao???");
-    }
     printf("Qual das opções de voto %s escolheu? ",entrevistado);
+
     scanf("%d",&op);
     if((op<1) || (op>7)){
             printf("\n\n");
@@ -49,7 +47,6 @@ int selecionaOperacaoOpcao(){
 int main(void)
 {
     setlocale(LC_ALL,"portuguese");
-
     int op,op1,total,it,aux1,aux2,aux3,i1,i2,cont;
     char conj1[100][100];
     char conj2[100][100];
@@ -68,7 +65,7 @@ int main(void)
     printf("Informe o total de entrevistados?(máx.100) ");
     scanf("%d",&total);
     printf("\n");
-    printf("Qual o nome doprimeiro cojunto?(máx.100) ");
+    printf("Qual o nome do primeiro cojunto?(máx.100) ");
     fflush(stdin);
     gets(A);
     printf("\n");
@@ -152,23 +149,11 @@ int main(void)
     do
     {
         op = selecionaOperacaoOpcao();
-        op1 = selecionaVotoOpcao(A,B,C,entrevistado,1);
         switch (op)
         {
         case 1:
-            printf("Intercessão de %s e %s\n\n",A,B);
-            for(i1=0; i1<aux1; i1++)
-            {
-                for(i2=0; i2<aux2; i2++)
-                {
-                    if(strcmp(conj2[i2],conj1[i1])==0)
-                    {
-                        printf("%s",conj1[i1]);
-                        printf("\n");
-                    }
-                }
-            }
-            printf("\n\n\n");
+            processaIntercessao(A,B,C,conj1,conj2,conj3,aux1,aux2,aux3);
+
             system("pause");
 
             break;
@@ -222,4 +207,67 @@ int main(void)
 
     return 0;
 
+}
+
+void processaIntercessao(char* A,char* B,char* C,char conj1[100][100],char conj2[100][100],char conj3[100][100],int aux1,int aux2,int aux3){
+    printf("Intercessão de %s e %s \n\n",A,B);
+    for(int i1=0; i1<aux1; i1++)
+    {
+        for(int i2=0; i2<aux2; i2++)
+        {
+            if(strcmp(conj2[i2],conj1[i1])==0)
+            {
+                printf("%s",conj1[i1]);
+                printf("\n");
+            }
+        }
+    }
+    printf("\n\n\n");
+
+    printf("Intercessão de %s e %s\n\n",A,C);
+    for(int i1=0; i1<aux1; i1++)
+    {
+        for(int i2=0; i2<aux3; i2++)
+        {
+            if(strcmp(conj3[i2],conj1[i1])==0)
+            {
+                printf("%s",conj1[i1]);
+                printf("\n");
+            }
+        }
+    }
+    printf("\n\n\n");
+
+    printf("Intercessão de %s e %s\n\n",B,C);
+    for(int i1=0; i1<aux2; i1++)
+    {
+        for(int i2=0; i2<aux3; i2++)
+        {
+            if(strcmp(conj3[i2],conj2[i1])==0)
+            {
+                printf("%s",conj2[i1]);
+                printf("\n");
+            }
+        }
+    }
+
+    printf("Intercessão de %s e %s  e %s \n\n",A,B,C);
+    for(int i1=0; i1<aux1; i1++)
+    {
+        for(int i2=0; i2<aux2; i2++)
+        {
+            if(strcmp(conj2[i2],conj1[i1])==0)
+            {
+                for(int i3=0; i3<aux3; i3++)
+                {
+                    if(strcmp(conj3[i3],conj2[i2])==0)
+                    {
+                        printf("%s",conj1[i1]);
+                        printf("\n");
+                    }
+                }
+            }
+        }
+    }
+    printf("\n\n\n");
 }
