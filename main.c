@@ -197,7 +197,6 @@ int main(void)
 
 void processaIntercessao(char* A,char* B,char* C,char** conj1,char** conj2,char** conj3,int aux1,int aux2,int aux3){
     printf("Intercessão de %s e %s \n\n",A,B);
-    printf("%s", conj1[0]);
     for(int i1=0; i1<aux1; i1++)
     {
         for(int i2=0; i2<aux2; i2++)
