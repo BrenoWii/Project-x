@@ -48,9 +48,9 @@ int main(void)
 {
     setlocale(LC_ALL,"portuguese");
     int op,op1,total,it,aux1,aux2,aux3,i1,i2,cont;
-    char conj1[100][100];
-    char conj2[100][100];
-    char conj3[100][100];
+    char ** conj1 = malloc(sizeof(char *) * 100);
+    char ** conj2 = malloc(sizeof(char *) * 100);
+    char ** conj3 = malloc(sizeof(char *) * 100);
     char entrevistado[100];
     char A[100];
     char B[100];
@@ -93,24 +93,25 @@ int main(void)
             switch (op)
             {
             case 1:
-
+                conj1[aux1] = malloc(sizeof(char *) * 100);
                 strcpy(conj1[aux1],entrevistado);
                 aux1++;
                 break;
 
             case 2:
-
+                conj2[aux2] = malloc(sizeof(char *) * 100);
                 strcpy(conj2[aux2],entrevistado);
                 aux2++;
                 break;
 
             case 3:
-
+                conj3[aux3] = malloc(sizeof(char *) * 100);
                 strcpy(conj3[aux3],entrevistado);
                 aux3++;
                 break;
             case 4:
-
+                conj1[aux1] = malloc(sizeof(char *) * 100);
+                conj2[aux2] = malloc(sizeof(char *) * 100);
                 strcpy(conj1[aux1],entrevistado);
                 strcpy(conj2[aux2],entrevistado);
                 aux1++;
@@ -118,6 +119,8 @@ int main(void)
                 break;
 
             case 5:
+                conj1[aux1] = malloc(sizeof(char *) * 100);
+                conj3[aux3] = malloc(sizeof(char *) * 100);
 
                 strcpy(conj1[aux1],entrevistado);
                 strcpy(conj3[aux3],entrevistado);
@@ -126,6 +129,8 @@ int main(void)
                 break;
 
             case 6:
+                conj2[aux2] = malloc(sizeof(char *) * 100);
+                conj3[aux3] = malloc(sizeof(char *) * 100);
 
                 strcpy(conj2[aux2],entrevistado);
                 strcpy(conj3[aux3],entrevistado);
@@ -133,6 +138,9 @@ int main(void)
                 aux3++;
                 break;
             case 7:
+                conj1[aux1] = malloc(sizeof(char *) * 100);
+                conj2[aux2] = malloc(sizeof(char *) * 100);
+                conj3[aux3] = malloc(sizeof(char *) * 100);
                 strcpy(conj1[aux1],entrevistado);
                 strcpy(conj2[aux2],entrevistado);
                 strcpy(conj3[aux3],entrevistado);
@@ -159,29 +167,7 @@ int main(void)
             break;
 
         case 2:
-            printf("União de %s e %s\n\n",A,B);
-                for(i1=0;i1<aux1;i1++)
-                {
-                    printf("%s",conj1[i1]);
-                    printf("\n");
-                }
 
-                for(i2=0;i2<aux2;i2++)
-                {
-                    for(i1=0;i1<=aux1;i1++)
-                    {
-                        if (strcmp(conj1[i1],conj2[i2])==0)
-                        {
-                            break;
-                        }
-                        else if(i1==aux1)
-                        {
-                            printf("%s",conj2[i2]);
-                            printf("\n");
-                        }
-                    }
-                }
-            printf("\n\n\n");
             system("pause");
 
             break;
@@ -209,15 +195,16 @@ int main(void)
 
 }
 
-void processaIntercessao(char* A,char* B,char* C,char conj1[100][100],char conj2[100][100],char conj3[100][100],int aux1,int aux2,int aux3){
+void processaIntercessao(char* A,char* B,char* C,char** conj1,char** conj2,char** conj3,int aux1,int aux2,int aux3){
     printf("Intercessão de %s e %s \n\n",A,B);
+    printf("%s", conj1[0]);
     for(int i1=0; i1<aux1; i1++)
     {
         for(int i2=0; i2<aux2; i2++)
         {
             if(strcmp(conj2[i2],conj1[i1])==0)
             {
-                printf("%s",conj1[i1]);
+                printf("%s", conj1[i1]);
                 printf("\n");
             }
         }
@@ -271,3 +258,4 @@ void processaIntercessao(char* A,char* B,char* C,char conj1[100][100],char conj2
     }
     printf("\n\n\n");
 }
+
