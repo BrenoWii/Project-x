@@ -2,29 +2,100 @@
 #include <string.h>
 #include <stdlib.h>
 #include <locale.h>
+#include <math.h>//necessária para usar as funções matemáticas
 
-int selecionaVotoOpcao(A,B,C,entrevistado,param){
-    int op = 0;
+
+int selecionaVotoOpcao(int ***opcoesGeradas,int tam_v, int param)
+{
     system("cls");
-    printf("1-%s;\n",A);
-    printf("2-%s;\n",B);
-    printf("3-%s;\n",C);
-    printf("4-%s e %s;\n",A,B);
-    printf("5-%s e %s;\n",A,C);
-    printf("6-%s e %s;\n",B,C);
-    printf("7-%s e %s e %s ;\n",A,B,C);
-    printf("Qual das opções de voto %s escolheu? ",entrevistado);
+    int op = 0;
+    double dtam_v = tam_v;
+    double numero = 2.0;
+    double possibilidades = pow(numero,dtam_v);
 
+    printf("Em qual conjunto esse participante votou?");
+    for (int i = 0; i < possibilidades-1; i++)
+    {
+        printf("\n %i - ", i+1);
+        for (int j = 0; j < *opcoesGeradas[i][0]; j++)
+        {
+            printf("%s ", *opcoesGeradas[i][j+1]);
+        }
+
+
+    }
+    printf("\n");
     scanf("%d",&op);
-    if((op<1) || (op>7)){
-            printf("\n\n");
-            printf("Essa não era uma das opções disponiveis...\n");
-            system("pause");
+    if((op<1) || (op>7))
+    {
+        printf("\n\n");
+        printf("Essa não era uma das opções disponiveis...\n");
+        system("pause");
     }
     return op;
 
 }
-int selecionaOperacaoOpcao(){
+void comb(char **conjuntos,int ***opcoesGeradas, int v_bool[] , int i, int tam_v,int *contador)
+{
+    if (i == tam_v)
+    {
+        opcoesGeradas[*contador] = malloc(tam_v*sizeof(int *));
+        int salvos = 0;
+        for (int x =0;x<tam_v;x++)
+        {
+            if(v_bool[x] == 1 )
+            {
+                salvos++;
+            }
+        }
+        int contadorJ = 0 ;
+        for (int j = 0; j<tam_v;j++)
+        {
+            if(j == 0)
+            {
+                opcoesGeradas[*contador][contadorJ] = malloc(sizeof(int));
+                *opcoesGeradas[*contador][contadorJ] = salvos;
+            }
+
+            if (v_bool[j] == 1 )
+            {
+
+                opcoesGeradas[*contador][contadorJ+1] = &conjuntos[j];
+                contadorJ++;
+            }
+
+        }
+        *contador = *contador+1;
+    }
+    else
+    {
+        v_bool[i] = 1;
+        comb(conjuntos,opcoesGeradas,v_bool,i+1,tam_v,contador);
+
+        v_bool[i] = 0;
+        comb(conjuntos,opcoesGeradas,v_bool,i+1,tam_v,contador);
+
+    }
+}
+int ***gerarOpcoes (char** conjuntos,int numeroConjuntos)
+{
+    double numero = 2;
+    double DnumeroConjuntos = numeroConjuntos;
+    double teste =  pow(numero,DnumeroConjuntos);
+    int ***opcoesGeradas = malloc((teste -1) * sizeof(int)) ;
+    int contador = 0;
+    int *ponteiro = &contador;
+    int v_bool[(int)numeroConjuntos];
+    for (int i = 0;  i< numeroConjuntos; i++ )
+    {
+        v_bool[i] = 0;
+    }
+    comb(conjuntos,opcoesGeradas,v_bool,0,numeroConjuntos,ponteiro);
+
+    return opcoesGeradas;
+}
+int selecionaOperacaoOpcao()
+{
     int op = 0;
     system("cls");
     printf("1-Intercessão\n");
@@ -35,26 +106,72 @@ int selecionaOperacaoOpcao(){
     printf("Qual operação você deseja realizar?  ");
     scanf("%d",&op);
     system("cls");
-    if((op<1) || (op>5)){
-       printf("\n\n");
-       printf("Essa não era uma das opções disponiveis...\n");
-       system("pause");
+    if((op<1) || (op>5))
+    {
+        printf("\n\n");
+        printf("Essa não era uma das opções disponiveis...\n");
+        system("pause");
     }
     return op;
 
 }
 
+char **getConjuntos(int numeroConjuntos)
+{
+    char **conjuntos = malloc(sizeof(char *) * 100);
+    for (int i = 0; i < numeroConjuntos; i++)
+    {
+        char nome[100];
+        int count = 0;
+        printf("Digite o nome do %d conjunto:\n",i+1);
+        fflush(stdin);
+        gets(nome);
+        for(count = 0; nome[count] != '\0'; ++count);
+        conjuntos[i] = malloc(sizeof(char *)* count);
+        conjuntos[i] = strcpy(conjuntos[i], nome);
+
+    }
+    return conjuntos;
+}
+void processaSelecaoConjunto (int op,int ***resultados,char entrevistado,char **conjuntos,int ***opcoesGeradas,int numeroConjuntos)
+{
+    int posicoes = *opcoesGeradas[op-1][0];
+    resultados = malloc(sizeof(conjuntos)* numeroConjuntos);
+    for(int i= 0; i<numeroConjuntos; i++ )
+    {
+        resultados[i] = malloc(sizeof(conjuntos)* numeroConjuntos);
+        for (int j = 0 ; j < posicoes; j++)
+        {
+            if(j == 0)
+            {
+                resultados[i][j] = malloc(sizeof(conjuntos)* numeroConjuntos);
+                *resultados[i][j] = 0;
+            }
+            if(conjuntos[i] == *opcoesGeradas[op-1][j+1])
+            {
+
+                *resultados[i][0] = *resultados[i][0] + 1;
+                *resultados[i][*resultados[i][0]] = entrevistado;
+                printf("%s", conjuntos[i]);
+                printf("%s", *opcoesGeradas[op-1][j+1]);
+
+
+
+            }
+        }
+        resultados[i] = malloc(sizeof(char *)* numeroConjuntos);
+    }
+
+
+
+}
 int main(void)
 {
     setlocale(LC_ALL,"portuguese");
-    int op,op1,total,it,aux1,aux2,aux3,i1,i2,cont;
-    char ** conj1 = malloc(sizeof(char *) * 100);
-    char ** conj2 = malloc(sizeof(char *) * 100);
-    char ** conj3 = malloc(sizeof(char *) * 100);
+    int op,total,it,aux1,aux2,aux3,cont;
+    int ***resultados;
     char entrevistado[100];
-    char A[100];
-    char B[100];
-    char C[100];
+    int  numeroConjuntos = 0;
 
     it=0;
     aux1=0;
@@ -65,17 +182,17 @@ int main(void)
     printf("Informe o total de entrevistados?(máx.100) ");
     scanf("%d",&total);
     printf("\n");
-    printf("Qual o nome do primeiro cojunto?(máx.100) ");
+    printf("Quantos cojuntos você irá trabalhar??(máx.100) ");
     fflush(stdin);
-    gets(A);
+    scanf("%d",&numeroConjuntos);
     printf("\n");
-    printf("Qual o nome do segundo cojunto?(máx.100) ");
-    fflush(stdin);
-    gets(B);
-    printf("\n");
-    printf("Qual o nome do terceiro cojunto?(máx.100) ");
-    fflush(stdin);
-    gets(C);
+    char **conjuntos = getConjuntos(numeroConjuntos);
+    int ***opcoesGeradas = gerarOpcoes(conjuntos,numeroConjuntos);
+
+    double numero = 2;
+    double DnumeroConjuntos = numeroConjuntos;
+    double combinacoes =  pow(numero,DnumeroConjuntos) -1;
+
 
     while (it != total)
     {
@@ -87,104 +204,19 @@ int main(void)
 
         do
         {
-            op = selecionaVotoOpcao(A,B,C,entrevistado,0);
-        } while ((op<1) || (op>7));
 
-            switch (op)
-            {
-            case 1:
-                conj1[aux1] = malloc(sizeof(char *) * 100);
-                strcpy(conj1[aux1],entrevistado);
-                aux1++;
-                break;
-
-            case 2:
-                conj2[aux2] = malloc(sizeof(char *) * 100);
-                strcpy(conj2[aux2],entrevistado);
-                aux2++;
-                break;
-
-            case 3:
-                conj3[aux3] = malloc(sizeof(char *) * 100);
-                strcpy(conj3[aux3],entrevistado);
-                aux3++;
-                break;
-            case 4:
-                conj1[aux1] = malloc(sizeof(char *) * 100);
-                conj2[aux2] = malloc(sizeof(char *) * 100);
-                strcpy(conj1[aux1],entrevistado);
-                strcpy(conj2[aux2],entrevistado);
-                aux1++;
-                aux2++;
-                break;
-
-            case 5:
-                conj1[aux1] = malloc(sizeof(char *) * 100);
-                conj3[aux3] = malloc(sizeof(char *) * 100);
-
-                strcpy(conj1[aux1],entrevistado);
-                strcpy(conj3[aux3],entrevistado);
-                aux1++;
-                aux3++;
-                break;
-
-            case 6:
-                conj2[aux2] = malloc(sizeof(char *) * 100);
-                conj3[aux3] = malloc(sizeof(char *) * 100);
-
-                strcpy(conj2[aux2],entrevistado);
-                strcpy(conj3[aux3],entrevistado);
-                aux2++;
-                aux3++;
-                break;
-            case 7:
-                conj1[aux1] = malloc(sizeof(char *) * 100);
-                conj2[aux2] = malloc(sizeof(char *) * 100);
-                conj3[aux3] = malloc(sizeof(char *) * 100);
-                strcpy(conj1[aux1],entrevistado);
-                strcpy(conj2[aux2],entrevistado);
-                strcpy(conj3[aux3],entrevistado);
-                aux1++;
-                aux2++;
-                aux3++;
-                break;
-            }
-
-        cont++;
-        it++;
+            op = selecionaVotoOpcao(opcoesGeradas,numeroConjuntos,0);
+        }
+        while ((op<1) || (op > combinacoes));
+        processaSelecaoConjunto(op,resultados,entrevistado,conjuntos,opcoesGeradas,numeroConjuntos);
     }
 
     do
     {
         op = selecionaOperacaoOpcao();
-        switch (op)
-        {
-        case 1:
-            processaIntercessao(A,B,C,conj1,conj2,conj3,aux1,aux2,aux3);
 
-            system("pause");
-
-            break;
-
-        case 2:
-
-            system("pause");
-
-            break;
-
-        case 3:
-            {
-                break;
-            }
-
-            default:
-            {
-                printf("Não e possivel realizar uma das operações com esse valor...\n");
-                system("pause");
-                break;
-            }
-        }
-    } while (op!=3);
+    }
+    while (op!=3);
 
     system("cls");
     printf("Fim da execução\n\n");
@@ -195,7 +227,8 @@ int main(void)
 
 }
 
-void processaIntercessao(char* A,char* B,char* C,char** conj1,char** conj2,char** conj3,int aux1,int aux2,int aux3){
+void processaIntercessao(char* A,char* B,char* C,char** conj1,char** conj2,char** conj3,int aux1,int aux2,int aux3)
+{
     printf("Intercessão de %s e %s \n\n",A,B);
     for(int i1=0; i1<aux1; i1++)
     {
@@ -258,3 +291,30 @@ void processaIntercessao(char* A,char* B,char* C,char** conj1,char** conj2,char*
     printf("\n\n\n");
 }
 
+void processaUniao(char* A,char* B,char* C,char** conj1,char** conj2,char** conj3,int aux1,int aux2,int aux3)
+{
+    printf("União de %s e %s\n\n",A,B);
+    for(int i1=0; i1<aux1; i1++)
+    {
+        printf("%s",conj1[i1]);
+        printf("\n");
+    }
+
+    for(int i2=0; i2<aux2; i2++)
+    {
+        for(int i1=0; i1<=aux1; i1++)
+        {
+            if (strcmp(conj1[i1],conj2[i2])==0)
+            {
+                break;
+            }
+            else if(i1==aux1)
+            {
+                printf("%s",conj2[i2]);
+                printf("\n");
+            }
+        }
+    }
+    printf("\n\n\n");
+    system("pause");
+}
